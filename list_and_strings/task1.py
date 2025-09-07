@@ -2,11 +2,11 @@ levels = [301, 201, 151, 101, 51, 0]
 colors = ['Maroon', 'Purple', 'Red', 'Orange', 'Yellow', 'Green']
 concerns = ['Hazardous', 'Very unhealthy', 'Unhealthy', 'Unhealthy for Sensitive Groups', 'Moderate', 'Good',]
 
-def read_input(prompt: str):
-    s = input(prompt).strip()
-    if s.lower() == 'exit':
-        return None
-    if not s.isdigit():
+def read_input(prompt: str):  #Define a helper function to read and validate input value
+    s = input(prompt).strip() #Show the prompt, read what the user typed, remove spaces at ends 
+    if s.lower() == 'exit':   #If user typed "exit", (EXIT, Exit, etc.)
+        return None          #Return None to signal signal to the main loop to quit
+    if not s.isdigit():     #If the input is not all digits (e.g., 'abc', '12.3'. '-5')
         print("Invalid input. Please enter a whole number from the list of levels.")
         return "retry"
     return int(s)
