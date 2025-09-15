@@ -12,7 +12,7 @@ POSTS = [
     
 import re
 from collections import Counter
-from typing import List
+from typing import List, Set
 
 def clean_post(post: str) -> str:
     """Lowercase, replace punctuation with spaces, and collaspe multiple whitespace to one space."""
@@ -23,7 +23,7 @@ def clean_post(post: str) -> str:
 
 cleaned_posts = [clean_post(post) for post in POSTS]
 
-def extract_hashtags(post: str) -> set[str]:
+def extract_hashtags(post: str) -> Set[str]:
     """Return a set of tokens starting with # from a cleand string."""
     return {word for word in post.split() if word.startswith("#")}
 
@@ -41,7 +41,7 @@ def tag_post(cleaned_post: str) -> str:
 post_topics: List[str] = [tag_post(post) for post in cleaned_posts]
 
 
-all_tags: set[str] = set()
+all_tags: Set[str] = set()
 for post in cleaned_posts:
 	all_tags |= extract_hashtags(post)
      
