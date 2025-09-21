@@ -1,0 +1,22 @@
+catalog = {
+        101: {"name": "Notebook", "category": "Paper", "price": 3.99},
+        102: {"name": "Pen", "category": "Writing", "price": 1.50},
+        103: {"name": "Pencil", "category": "Writing", "price": 0.75},
+        104: {"name": "Eraser", "category": "Correction", "price": 0.99},
+        105: {"name": "Sharpener", "category": "Accessories", "price": 1.25},
+        106: {"name": "Ruler", "category": "Measuring", "price": 2.50},
+        107: {"name": "Glue Stick", "category": "Adhesive", "price": 1.99},
+        108: {"name": "Scissors", "category": "Cutting", "price": 4.99},
+        109: {"name": "Highlighter", "category": "Writing", "price": 2.75},
+        110: {"name": "Marker", "category": "Writing", "price": 3.49},
+        111: {"name": "Stapler", "category": "Office Supplies", "price": 5.99},
+        112: {"name": "Staples", "category": "Office Supplies", "price": 1.50},
+        113: {"name": "Paper Clips", "category": "Office Supplies", "price": 2.00},
+        114: {"name": "Binder", "category": "Organizing", "price": 6.50},
+        115: {"name": "Sticky Notes", "category": "Paper", "price": 3.25},
+        116: {"name": "Index Cards", "category": "Paper", "price": 2.99},
+        117: {"name": "Whiteboard Marker", "category": "Writing", "price": 3.75},
+        118: {"name": "File Folder", "category": "Organizing", "price": 4.50},
+        119: {"name": "Calculator", "category": "Electronics", "price": 12.99},
+        120: {"name": "Tape Dispenser", "category": "Adhesive", "price": 5.49}
+    }
