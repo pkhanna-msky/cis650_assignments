@@ -38,5 +38,5 @@ if __name__ == "__main__":
     print("2) area(5, 3) [rectangle] =", area(5, 3))
     print("3) area(2, 'circle') =", round(area(2, "circle"), 4))
     print("4) greet() =", greet())
-    print('5) greet("Alex") =', greet("Alex"))
+    print('5) greet("Cathy") =', greet("Cathy"))
         
