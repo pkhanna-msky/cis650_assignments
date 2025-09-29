@@ -33,7 +33,6 @@ def pick_file(files: list[str]) -> str | None:
         print("Canceled.")
         return None
 
-    # number?
     if choice.isdigit():
         idx = int(choice)
         if 1 <= idx <= len(files):
@@ -41,7 +40,6 @@ def pick_file(files: list[str]) -> str | None:
         print("Invalid number.")
         return None
 
-    # filename (case-insensitive match)
     lower_map = {f.lower(): f for f in files}
     return lower_map.get(choice.lower())
 
@@ -51,7 +49,6 @@ def main() -> None:
         print("No folder provided.")
         return
 
-    # Expand user (~) and normalize
     folder = os.path.abspath(os.path.expanduser(folder))
 
     if not os.path.isdir(folder):
