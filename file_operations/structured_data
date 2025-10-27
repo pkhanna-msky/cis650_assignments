@@ -1,0 +1,30 @@
+from pathlib import Path
+import cvv
+import json
+import sys
+
+#(i) Structured Data File Operations
+
+GROCERY_DATA = [
+    {"No": 1, "Item": "Ice cream", "Item type": "Processed", "Quantity": 2, "Unit": "ct", "Price": 4.99}, 
+    {"No": 2, "Item": "Chips" , "Item type": "Processed", "Quantity": 3, "Unit": "ct",  "Price": 3.00},
+    {"No": 3, "Item": "Popcorn",   "Item type": "Processed", "Quantity": 5,   "Unit": "ct",  "Price": 1.00},
+    {"No": 4, "Item": "Banana",    "Item type": "Fruits",    "Quantity": 4.0, "Unit": "lbs", "Price": 0.60},
+    {"No": 5, "Item": "Apples",    "Item type": "Fruits",    "Quantity": 5.0, "Unit": "lbs", "Price": 0.90},
+    {"No": 6, "Item": "Potato",    "Item type": "Vegetable", "Quantity": 10.0,"Unit": "lbs", "Price": 1.50},
+]
+
+# Default working folder (ii)
+WORK_DIR = Path.cwd() / "file_operations" / "structured_data"
+WORK_DIR.mkdir(parents=True, exist_ok=True
+               )
+# State the user can change at runtime
+current_dir = WORK_DIR
+
+
+def print_header(title: str):
+    print("\n"+ "=" * 72)
+    print(title)
+    print("=" * 72)
+
+    
