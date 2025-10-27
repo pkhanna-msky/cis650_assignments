@@ -1,13 +1,12 @@
 from pathlib import Path
-import cvv
+import csv
 import json
 import sys
 
-#(i) Structured Data File Operations
-
+# (i) Structured data to store
 GROCERY_DATA = [
-    {"No": 1, "Item": "Ice cream", "Item type": "Processed", "Quantity": 2, "Unit": "ct", "Price": 4.99}, 
-    {"No": 2, "Item": "Chips" , "Item type": "Processed", "Quantity": 3, "Unit": "ct",  "Price": 3.00},
+    {"No": 1, "Item": "Ice cream", "Item type": "Processed", "Quantity": 2,   "Unit": "ct",  "Price": 4.99},
+    {"No": 2, "Item": "Chips",     "Item type": "Processed", "Quantity": 3,   "Unit": "ct",  "Price": 3.00},
     {"No": 3, "Item": "Popcorn",   "Item type": "Processed", "Quantity": 5,   "Unit": "ct",  "Price": 1.00},
     {"No": 4, "Item": "Banana",    "Item type": "Fruits",    "Quantity": 4.0, "Unit": "lbs", "Price": 0.60},
     {"No": 5, "Item": "Apples",    "Item type": "Fruits",    "Quantity": 5.0, "Unit": "lbs", "Price": 0.90},
@@ -15,16 +14,176 @@ GROCERY_DATA = [
 ]
 
 # Default working folder (ii)
-WORK_DIR = Path.cwd() / "file_operations" / "structured_data"
-WORK_DIR.mkdir(parents=True, exist_ok=True
-               )
+WORK_DIR = Path.cwd() / "file_operations_data"
+WORK_DIR.mkdir(exist_ok=True)
+
 # State the user can change at runtime
 current_dir = WORK_DIR
 
-
+# Helpers
 def print_header(title: str):
-    print("\n"+ "=" * 72)
+    print("\n" + "=" * 72)
     print(title)
     print("=" * 72)
 
-    
+def input_nonempty(prompt: str) -> str:
+    while True:
+        s = input(prompt).strip()
+        if s:
+            return s
+
+def choose_dir() -> Path:
+    """(ii) Show default folder and allow switch/create new."""
+    global current_dir
+    print_header("Current Folder")
+    print(f"Default folder: {WORK_DIR}")
+    print(f"Active folder:  {current_dir}")
+    print("\nOptions:")
+    print("  1) Keep using the active folder")
+    print("  2) Switch to a different existing folder")
+    print("  3) Create a new folder and use it")
+    choice = input("Choose (1/2/3): ").strip() or "1"
+
+    try:
+        if choice == "2":
+            p = Path(input_nonempty("Enter path to an existing folder: ")).expanduser()
+            if not p.exists() or not p.is_dir():
+                print("That folder does not exist.")
+            else:
+                current_dir = p
+                print(f"Active folder set to: {current_dir}")
+        elif choice == "3":
+            p = Path(input_nonempty("Enter path for NEW folder to create: ")).expanduser()
+            p.mkdir(parents=True, exist_ok=True)
+            current_dir = p
+            print(f"Created and set active folder: {current_dir}")
+        else:
+            print("Keeping current active folder.")
+    except Exception as e:
+        print(f"Error changing folder: {e}")
+
+def prompt_filename_and_type():
+    """(iii) Prompt for file name & type; confirm overwrite if exists."""
+    print_header("Create a Data File from Structured Data")
+    name = input_nonempty("Enter a file name (without extension): ")
+    ftype = input("Choose type [txt | csv | json]: ").strip().lower()
+    while ftype not in {"txt", "csv", "json"}:
+        ftype = input("Type must be txt, csv, or json. Try again: ").strip().lower()
+
+    target = current_dir / f"{name}.{ftype}"
+    if target.exists():
+        ans = input(f"'{target.name}' already exists. Overwrite? [y/N]: ").strip().lower()
+        if ans != "y":
+            print("Canceled by user. No file created.")
+            return None, None
+    return target, ftype
+
+def write_txt(path: Path):
+    with path.open("w", encoding="utf-8") as f:
+        f.write("No | Item      | Item type | Quantity | Unit | Price\n")
+        f.write("-- | --------- | --------- | -------- | ---- | -----\n")
+        for row in GROCERY_DATA:
+            f.write(f"{row['No']:>2} | {row['Item']:<9} | {row['Item type']:<9} | "
+                    f"{str(row['Quantity']):>8} | {row['Unit']:<4} | ${row['Price']:.2f}\n")
+
+def write_csv(path: Path):
+    with path.open("w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=["No", "Item", "Item type", "Quantity", "Unit", "Price"])
+        writer.writeheader()
+        writer.writerows(GROCERY_DATA)
+
+def write_json(path: Path):
+    with path.open("w", encoding="utf-8") as f:
+        json.dump(GROCERY_DATA, f, indent=2)
+
+def create_file():
+    """(iv) Create the file with chosen name & type and write structured data."""
+    target, ftype = prompt_filename_and_type()
+    if not target:
+        return
+    try:
+        if ftype == "txt":
+            write_txt(target)
+        elif ftype == "csv":
+            write_csv(target)
+        else:
+            write_json(target)
+        print(f"Created: {target}")
+    except Exception as e:
+        print(f"Error creating file: {e}")
+
+def view_text_file():
+    """(v) Open & display contents only if it is a text (.txt) file."""
+    print_header("View a Text File")
+    name = input_nonempty("Enter a file name (with or without .txt): ")
+    p = Path(name)
+    if p.suffix.lower() != ".txt":
+        # allow bare name, assume .txt
+        if p.suffix == "":
+            p = current_dir / (p.name + ".txt")
+        else:
+            p = current_dir / p.name  # as typed, but we'll verify suffix below
+
+    if p.suffix.lower() != ".txt":
+        print("Only .txt files can be displayed.")
+        return
+
+    if not p.is_absolute():
+        p = current_dir / p
+
+    if not p.exists():
+        print(f"Not found: {p}")
+        return
+
+    try:
+        print_header(f"Contents of {p.name}")
+        with p.open("r", encoding="utf-8") as f:
+            print(f.read())
+    except UnicodeDecodeError:
+        print("Unable to read file as text (encoding issue).")
+    except Exception as e:
+        print(f"Error opening file: {e}")
+
+def list_files():
+    print_header(f"Files in {current_dir}")
+    try:
+        entries = sorted([x.name for x in current_dir.iterdir() if x.is_file()])
+        if not entries:
+            print("(no files)")
+        else:
+            for name in entries:
+                print(" -", name)
+    except Exception as e:
+        print(f"Error listing files: {e}")
+
+def main_menu():
+    while True:
+        print_header("CIS 650 – File Operations")
+        print(f"Active folder: {current_dir}")
+        print("\nChoose an action:")
+        print(" 1) Show/switch/create working folder (req ii)")
+        print(" 2) Create a file from the structured data (req iii & iv)")
+        print(" 3) View a text file’s contents (req v, .txt only)")
+        print(" 4) List files in active folder")
+        print(" 5) Exit")
+        choice = input("Enter choice [1-5]: ").strip()
+        if choice == "1":
+            choose_dir()
+        elif choice == "2":
+            create_file()
+        elif choice == "3":
+            view_text_file()
+        elif choice == "4":
+            list_files()
+        elif choice == "5":
+            print("Goodbye!")
+            return
+        else:
+            print("Invalid choice. Try again.")
+
+if __name__ == "__main__":
+    try:
+        main_menu()
+    except KeyboardInterrupt:
+        print("\nInterrupted. Exiting.")
+        sys.exit(0)
